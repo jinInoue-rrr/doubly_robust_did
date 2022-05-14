@@ -16,7 +16,7 @@
 \setbeamertemplate{navigation symbols}{} 
 
 \title{Introduction to Doubly Robust Differece-in-Differences} 
-\author{Inoue Jin} 
+\author{M1 Inoue Jin}
 \institute{Hitotsubashi University} 
 
 \begin{document}
@@ -25,16 +25,48 @@
     \titlepage
 \end{frame}
 
+\begin{frame}\frametitle{Doubly Robust DiD}
+    \begin{itemize}
+        \item Doubly Robust DiD was proposed by Sant'Anna and Zhao(2020)
+        \item This paper suggests doubly robust estimators for the ATT in DiD research designs.
+        \item Authors also state that one can construct doubly robust DiD estimators for the ATT that are also doubly robust for inference.
+    \end{itemize}
+\end{frame}
 
+\begin{frame}\frametitle{Notations}
+    \begin{itemize}
+        \item $Y_{it}$ : the outcome of interest for unit $i$ at time $t$
+        \item $t$ : researchers have access to outcome data in a pre-treated period $t = 0$ and in a post-treatment period $t = 1$.
+    \end{itemize}
 
+\end{frame}
 
+\begin{frame}\frametitle{The parameter of interest}
+    \begin{itemize}
+        \item nanka iikanjino bunsyou for the introduction of ATT
+        \item Difference in Differences identify the average treatment effect for the treated (ATT). 
+    \end{itemize}
+    \begin{block}{The parameter of interest:ATT}
+        $\tau = \mathbb{E}[Y_{i1}(1) - Y_{i1}(0)| D_{i} = 1] = \mathbb{E}[Y_{1} |D = 1] - \mathbb{E}[Y_{1}(0) | D = 1]$
+    %Y_{i1}(1) = Y_{i1} if D_{i} = 1
+    \end{block}
+\end{frame}
 
+\begin{frame}\frametitle{Assumption1}
+    \begin{assumption}[Assumption1.]
+        the data $\{Y_{i0}, Y_{i1}, D_{i}, X_{i}\}^{n}_{i = 1}$ are independent and identically distributed (iid)
+    \end{assumption}
+\end{frame}
 
-
-
-
-
+\begin{frame}\frametitle{Assumption2}
+    \begin{assumption}[Assumption2.]
+        $\mathbb{E}[Y_{1}(0) - Y_{0}(0)| D = 1, X] = \mathbb{E}[Y_{1}(0) - Y_{0}(0)|D = 0, X]$ almost surely ($a.s.$).
+    \end{assumption}
+    \begin{itemize}
+        \item This assumption is called "Conditional Parallel Trend Assumption"
+        \item It is crucial for the most of DiD literature.
+    \end{itemize}
+\end{frame}
 
 
 \end{document}
-
