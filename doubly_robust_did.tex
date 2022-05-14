@@ -1,4 +1,4 @@
-\documentclass{beamer} 
+\documentclass{beamer}
 \usepackage{luatexja} 
 \usepackage[ipaex]{luatexja-preset} 
 \renewcommand{\kanjifamilydefault}{\gtdefault} 
@@ -38,7 +38,6 @@
         \item $Y_{it}$ : the outcome of interest for unit $i$ at time $t$
         \item $t$ : researchers have access to outcome data in a pre-treated period $t = 0$ and in a post-treatment period $t = 1$.
     \end{itemize}
-
 \end{frame}
 
 \begin{frame}\frametitle{The parameter of interest}
@@ -52,20 +51,78 @@
     \end{block}
 \end{frame}
 
-\begin{frame}\frametitle{Assumption1}
-    \begin{assumption}[Assumption1.]
+\begin{frame}\frametitle{Assumption 1.}
+    \begin{assumption}[Random Sampling]
         the data $\{Y_{i0}, Y_{i1}, D_{i}, X_{i}\}^{n}_{i = 1}$ are independent and identically distributed (iid)
     \end{assumption}
 \end{frame}
 
-\begin{frame}\frametitle{Assumption2}
-    \begin{assumption}[Assumption2.]
-        $\mathbb{E}[Y_{1}(0) - Y_{0}(0)| D = 1, X] = \mathbb{E}[Y_{1}(0) - Y_{0}(0)|D = 0, X]$ almost surely ($a.s.$).
+\begin{frame}\frametitle{Assumption 2.}
+    \begin{assumption}[Conditional PTA]
+        $\mathbb{E}[Y_{1}(0) - Y_{0}(0)| D = 1, X] = \mathbb{E}[Y_{1}(0) - Y_{0}(0)|D = 0, X]$ almost surely (a.s.).
     \end{assumption}
     \begin{itemize}
         \item This assumption is called "Conditional Parallel Trend Assumption"
         \item It is crucial for the most of DiD literature.
     \end{itemize}
+\end{frame}
+
+\begin{frame}\frametitle{Assumption 3.}
+    \begin{assumption}[Overlap Condition]
+        For some $\varepsilon > 0$, $\mathbb{P}(D = 1) > \varepsilon$ and $\mathbb{P}(D = 1|X) \leq 1 - \varepsilon$ a.s.
+    \end{assumption}
+    \begin{itemize}
+        \item This assumption states that at least a small fraction of the population is treated and that for every value of the covariates X, there is at least a small probability that the unit is not treated.%IPWの部分が発散してしまう場合を排除するための仮定
+        \item These assumptions are standard in conditional DID methods.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}\frametitle{Doubly Robust DiD estimand:Notation}
+    \begin{itemize}
+        \item $\pi(X)$ : an arbitrary model for the true, unknown propensity score
+        \item $\Delta Y = Y_{1} - Y_{0}$:the difference of observed outcomes
+        \item $\mu ^{p}_{d,\Delta} \equiv \mu ^{p}_{d,1}(X) - \mu ^{p}_{d,0}(X)$
+        \begin{itemize}
+            \item $\mu ^{p}_{d,t}$ : a model for the true, unknown outcome regression $m^{p}_{d,t} \equiv \mathbb{E}[Y_{t}|D = d, X = x]],d,t = 0,1$
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}\frametitle{Doubly Robust DiD estimand}
+    \begin{block}{DR DID estimand when panel data are available}
+        \begin{equation*}
+        \tau^{dr,p} = \mathbb{E}\lbrack (w^{p}_{1}(D)- w^{p}_{0}(D,X;\pi))(\Delta Y - \mu ^{p}_{0,\Delta}(X)))\rbrack
+        \end{equation*}
+        where, for a generic $g$,
+        \begin{equation*}
+            w^{p}_{1}(D) = \frac{D}{ \mathbb{E}[D]},w^{p}_{0}(D,X;g) = \frac{ \frac{g(X)(1-D)}{1-g(X)}}{ \mathbb{E}[\frac{g(X)(1-D)}{1-g(X)}]}
+        \end{equation*}
+    \end{block}
+\end{frame}
+
+\begin{frame}\frametitle{Doubly Robust DiD estimand}
+    \begin{block}{Theorem 1.}
+        Let Assumptions 1-3 hold. When panel data are available, $\tau ^{dr,p} = \tau$ if either (but not necessarily both) $\pi(X) = p(X)$ a.s. or $\mu ^{p}_{\Delta}(X) = m^{p}_{0,1}(X) - m^{p}_{0,0}(X)$
+    \end{block}
+
+    \begin{itemize}
+        \item This theorem states that at least one of the outcome regression model or propensity score model is correctly specified, we can recover the average treatment effect for the treated(ATT).
+        \begin{itemize}
+            \item Case1:the propensity score model is correctly specified($\pi(X) = p(X) = P(D = 1|X)$), but the outcome regression model is miss-specified.
+            \item Case2:the outcome regression model is correcly specified($\mu ^{p}_{0,\Delta}(X) = m^{p}_{0,\Delta}(X) = \mathbb{E}[Y_{1}|D = 0, X] - \mathbb{E}[Y_{0}|D = 0, X]$), but the propensity score model is miss-specified.
+        \end{itemize}
+    \end{itemize}
+
+\end{frame}
+
+\begin{frame}\frametitle{Proof of Theorem 1.(Case1)}
+    In Case 1, the propensity score model $\pi(X)$ is equivalent to the true propensity score $p(X) = P(D = 1|X)$. 
+
+    First, calculate the difference of two weights $w^{p}_{1}(D) - w^{p}_{0}(D)$:
+    \begin{eqnarray*}
+        w^{p}_{1}(D) - w^{p}_{0}(D) &=& \frac{D}{ \mathbb{E}[D]} - \frac{ \frac{\pi(X)(1-D)}{1-\pi(X)}}{ \mathbb{E}[\frac{\pi(X)(1-D)}{1-\pi(X)}]} \\
+        &=& \frac{D}{\mathbb{E}[D]}
+    \end{eqnarray*}
 \end{frame}
 
 
