@@ -1,4 +1,4 @@
-\documentclass{beamer}
+\documentclass[fleqn]{beamer}
 \usepackage{luatexja} 
 \usepackage[ipaex]{luatexja-preset} 
 \renewcommand{\kanjifamilydefault}{\gtdefault} 
@@ -6,7 +6,8 @@
 \usepackage{bm} 
 \usepackage{mathtools} 
 \usepackage{amsmath} 
-\usepackage{amsthm} 
+\usepackage{amsthm}
+
 
 \newtheorem{thm}{Theorem}[section] 
 \newtheorem{lem}[thm]{Lemma} 
@@ -20,6 +21,7 @@
 \institute{Hitotsubashi University} 
 
 \begin{document}
+\setlength{\mathindent}{0pt}
 
 \begin{frame}
     \titlepage
@@ -33,10 +35,20 @@
     \end{itemize}
 \end{frame}
 
-\begin{frame}\frametitle{Notations}
+\begin{frame}\frametitle{Notation}
     \begin{itemize}
         \item $Y_{it}$ : the outcome of interest for unit $i$ at time $t$
         \item $t$ : researchers have access to outcome data in a pre-treated period $t = 0$ and in a post-treatment period $t = 1$.
+        \item $D_{it} = 1$ if $i$ is treated before time t and $D_{it} = 0$ otherwise.
+        \begin{itemize}
+            \item $D_{i0} = 0$ for every $i$ at time $t$ and then, $D_{i} = D_{i1}$
+        \end{itemize}
+        \item $Y_{it} = D_{i}Y_{it}(1) + (1 - D_{i})Y_{it}(0)$
+        \begin{itemize}
+            \item $Y_{i0} = Y_{i0}(0)$ for all $i$ 
+            \item $Y_{i1} = D_{i}Y_{i1}(1) + (1 - D_{i})Y_{i1}(0)$ 
+        \end{itemize}
+        \item $X_{i}$ :a vector of pre-treatment covariates.
     \end{itemize}
 \end{frame}
 
@@ -115,15 +127,83 @@
 
 \end{frame}
 
-\begin{frame}\frametitle{Proof of Theorem 1.(Case1)}
+\begin{frame}\frametitle{Proof of Theorem 1.(Case 1)}
     In Case 1, the propensity score model $\pi(X)$ is equivalent to the true propensity score $p(X) = P(D = 1|X)$. 
 
-    First, calculate the difference of two weights $w^{p}_{1}(D) - w^{p}_{0}(D)$:
+    To begin with, calculate the difference of two weights $w^{p}_{1}(D) - w^{p}_{0}(D,X)$:
     \begin{eqnarray*}
-        w^{p}_{1}(D) - w^{p}_{0}(D) &=& \frac{D}{ \mathbb{E}[D]} - \frac{ \frac{\pi(X)(1-D)}{1-\pi(X)}}{ \mathbb{E}[\frac{\pi(X)(1-D)}{1-\pi(X)}]} \\
-        &=& \frac{D}{\mathbb{E}[D]}
+        w^{p}_{1}(D) - w^{p}_{0}(D,X) &=& \frac{D}{ \mathbb{E}[D]} - \frac{ \frac{\pi(X)(1-D)}{1-\pi(X)}}{ \mathbb{E}[\frac{\pi(X)(1-D)}{1-\pi(X)}]} \\
+        &=& \frac{D}{\mathbb{E}[D]} - \frac{\frac{p(X)(1-D)}{1-p(X)}}{\mathbb{E}[D]} \\
+        &=& \frac{1}{\mathbb{E}[D]} \left(\frac{(1-p(X))D}{1-p(X)} - \frac{(1-D)p(X)}{1-p(X)} \right) \\
+        &=& \frac{D - p(X)}{\mathbb{E}[D](1-p(X))}
     \end{eqnarray*}
 \end{frame}
 
+\begin{frame}\frametitle{Proof of Theorem 1.(Case 1)}
+Therefore,
+    \begin{eqnarray*}
+        \tau ^{dr,p} &=& \mathbb{E}\left[(w^{p}_{1}(D) - w^{p}_{0}(D,X))(\Delta Y - \mu^{p}_{0,\Delta}(X))\right] \\
+        &=& \mathbb{E}\left[\left(\frac{D - p(X)}{\mathbb{E}[D](1-p(X))}\right)\left(\Delta Y - \mu^{p}_{0,\Delta}(X)\right)\right] \\
+        &=& \mathbb{E}\left[\left(\frac{D - p(X)}{\mathbb{E}[D](1-p(X))}\right)\Delta Y\right] - \mathbb{E}\left[\left(\frac{D - p(X)}{\mathbb{E}[D](1-p(X))}\right)\mu^{p}_{0,\Delta}(X)\right]
+    \end{eqnarray*}
+The first term is equivalent to the Abadie(2005)'s IPW DID estimator. The second term seems to be "bias term" and we want this term to be zero.
+\end{frame}
+
+\begin{frame}\frametitle{Proof of Theorem 1.(Case 1)}
+    Then, the bias term is:
+    \begin{eqnarray*}
+        \mathbb{E}\left[\left(\frac{D-p(X)}{\mathbb{E}[D](1-p(X))}\right)\mu^{p}_{0, \Delta}(X)\right] &=& \mathbb{E}\left[\mathbb{E}\left[\frac{\left(D-p(X)\right)\mu^{p}_{0,\Delta}(X)}{\mathbb{E}[D](1-p(X))}\middle| X\right]\right] \\
+        &=& \mathbb{E}\left[\frac{\mu^{p}_{0,\Delta}(X)\mathbb{E}\left[(D-p(X))\middle|X\right]}{\mathbb{E}[D](1-p(X))}\right]\\
+        &=& \mathbb{E}\left[\frac{\mu^{p}_{0,\Delta}(X) \left(\mathbb{E}\left[D\middle|X\right] - p(X)\right)}{\mathbb{E}\left[D\right](1-p(X))}\right] \\
+        &=& 0
+    \end{eqnarray*}
+The first line is obtained by the law of iterated expectation, and the third line reduces to 0 because $p(X) = P(D = 1|X) = \mathbb{E}[D|X]$.
+\end{frame}
+
+\begin{frame}\frametitle{Proof of Theorem 1.(Case 1)}
+    Next, check whether the IPW estimator is equivalent to ATT:
+    \begin{eqnarray*}
+        \mathbb{E}\left[\frac{(D-p(X))}{\mathbb{E}[D](1-p(X))}\Delta Y \right] &=&\mathbb{E}\left[\mathbb{E}\left[\mathbb{E}\left[\frac{(D-p(X))}{\mathbb{E}[D](1-p(X))}\Delta Y\middle|D,X\right]\middle|X\right]\right] \\
+    \end{eqnarray*}
+
+    Note that $\Delta Y = Y_{1} - Y_{0} = DY_{1}(1) + (1-D)Y_{1}(0) - Y_{0}(0)$ (applying the equation of potential outcomes.) \\
+\end{frame}
+
+\begin{frame}\frametitle{Proof of Theorem 1.(Case 1)}
+    We can calculate the second expectation by definition:
+    \footnotesize
+    \begin{align*}
+        \MoveEqLeft
+        \mathbb{E}_{D}\left[\mathbb{E}\left[\frac{D-p(X)}{\mathbb{E}[D](1-p(X))}\left(DY_{1}(1) + (1-D)Y_{1}(0) - Y_{0}(0)\right)\middle|D,X\right]\middle|X \right]
+        \\&= 
+        \frac{p(X)}{P(D = 1)}\mathbb{E}\left[Y_{1}(1) - Y_{0}(0)\middle|D = 1, X\right] - \frac{p(X)}{P(D = 1)}\mathbb{E}\left[Y_{1}(0) - Y_{0}(0)\middle|D = 0, X \right]
+        \\&= 
+        \frac{p(X)}{P(D = 1)} \{ \mathbb{E}[Y_{1}(1) - Y_{0}(0)|D = 1, X] - \mathbb{E}[Y_{1}(0) - Y_{0}(0)|D = 1, X] \}
+        \\&=
+        \frac{p(X)}{P(D = 1)}\mathbb{E}[Y_{1}(1) - Y_{1}(0)|D = 1, X]
+    \end{align*}
+    \normalsize
+    The first equality follows from the direct calculation of the outer conditional expectation, and we can obtain the second equality by applying the conditional PTA(Assumption 2.).
+\end{frame}
+
+\begin{frame}\frametitle{Proof of Theorem 1.(Case 1.)}
+    Finally, ATT is recovered by direct calculation.
+    \begin{align*}
+        \MoveEqLeft
+        \mathbb{E}_{X}\left[\frac{p(X)}{P(D = 1)}\mathbb{E}[Y_{1}(1) - Y_{1}(0)|D = 1, X]\right]
+        \\&=
+        \int_{x}\frac{P(D = 1|X)}{P(D = 1)} \int_{y} \left(y_{1}(1) - y_{1}(0)\right)f(y|d = 1, x)f(x)dydx
+        \\&=
+        \int_{y}\int_{x}\frac{f(d = 1|x)}{f(d = 1)}\frac{f(y, d = 1, x)}{f(d = 1, x)}f(x)\left(y_{1}(1) - y_{1}(0)\right)dxdy
+        \\&=
+        \int_{y}\int_{x}\frac{f(d = 1|x)}{f(d = 1)}\frac{f(y, d = 1, x)f(x)}{f(d = 1 |x)f(x)}\left(y_{1}(1) - y_{1}(0)\right)dxdy
+        \\&=
+        \int_{y}\frac{y_{1}(1) - y_{1}(0)}{f(d = 1)} \biggl \{ \int_{x}f(y, d = 1, x)dx \biggl \} dy
+        \\&=
+        \int_{y}(y_{1}(1) - y_{1}(0))f(y|d = 1)dy
+        \\&=
+        \mathbb{E}[Y_{1}(1) - Y_{1}(0)|D = 1]
+    \end{align*}
+\end{frame}
 
 \end{document}
