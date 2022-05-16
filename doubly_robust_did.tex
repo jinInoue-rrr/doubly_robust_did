@@ -1,4 +1,4 @@
-\documentclass[fleqn]{beamer}
+\documentclass{beamer}
 \usepackage{luatexja} 
 \usepackage[ipaex]{luatexja-preset} 
 \renewcommand{\kanjifamilydefault}{\gtdefault} 
@@ -17,11 +17,12 @@
 \setbeamertemplate{navigation symbols}{} 
 
 \title{Introduction to Doubly Robust Differece-in-Differences} 
+\subtitle{Sant'Anna and Zhao(2020)}
 \author{M1 Inoue Jin}
 \institute{Hitotsubashi University} 
 
 \begin{document}
-\setlength{\mathindent}{0pt}
+%\setlength{\mathindent}{0pt}
 
 \begin{frame}
     \titlepage
@@ -54,7 +55,6 @@
 
 \begin{frame}\frametitle{The parameter of interest}
     \begin{itemize}
-        \item nanka iikanjino bunsyou for the introduction of ATT
         \item Difference in Differences identify the average treatment effect for the treated (ATT). 
     \end{itemize}
     \begin{block}{The parameter of interest:ATT}
@@ -75,7 +75,7 @@
     \end{assumption}
     \begin{itemize}
         \item This assumption is called "Conditional Parallel Trend Assumption"
-        \item It is crucial for the most of DiD literature.
+        \item It is crucial for most of DiD literature.
     \end{itemize}
 \end{frame}
 
@@ -84,7 +84,7 @@
         For some $\varepsilon > 0$, $\mathbb{P}(D = 1) > \varepsilon$ and $\mathbb{P}(D = 1|X) \leq 1 - \varepsilon$ a.s.
     \end{assumption}
     \begin{itemize}
-        \item This assumption states that at least a small fraction of the population is treated and that for every value of the covariates X, there is at least a small probability that the unit is not treated.%IPWの部分が発散してしまう場合を排除するための仮定
+        \item This assumption states that at least a small fraction of the population is treated and that for every value of the covariates X, there is at least a small probability that the unit is not treated.
         \item These assumptions are standard in conditional DID methods.
     \end{itemize}
 \end{frame}
@@ -124,7 +124,6 @@
             \item Case2:the outcome regression model is correcly specified($\mu ^{p}_{0,\Delta}(X) = m^{p}_{0,\Delta}(X) = \mathbb{E}[Y_{1}|D = 0, X] - \mathbb{E}[Y_{0}|D = 0, X]$), but the propensity score model is miss-specified.
         \end{itemize}
     \end{itemize}
-
 \end{frame}
 
 \begin{frame}\frametitle{Proof of Theorem 1.(Case 1)}
@@ -204,6 +203,100 @@ The first line is obtained by the law of iterated expectation, and the third lin
         \\&=
         \mathbb{E}[Y_{1}(1) - Y_{1}(0)|D = 1]
     \end{align*}
+\end{frame}
+
+\begin{frame}\frametitle{Estimation and Inference}
+    \begin{block}{DR DiD estimator}
+        \begin{equation*}
+            \widehat{\tau}^{dr,p} = \mathbb{E}_{n}\left[(\widehat{w}^{p}_{1}(D) - \widehat{w}^{p}_{0}(D,X;\widehat{\gamma}))(\Delta Y - \mu^{p}_{0, \Delta}(X;\widehat{\beta}^{p}_{0,0},\widehat{\beta}^{p}_{0,1}))\right],
+        \end{equation*}
+        where\\
+        $\widehat{w}^{p}_{1}(D) = \frac{D}{\mathbb{E}_{n}[D]}$, $\widehat{w}^{p}_{0}(D,X;\gamma) = \left. \frac{\pi(X;\gamma)(1-D)}{1-\pi(X;\gamma)}\middle/ \mathbb{E}_{n}\left[\frac{\pi(X;\gamma)(1-D)}{1-\pi(X;\gamma)}\right]\right.$
+    \end{block}
+    \begin{itemize}
+        \item $\widehat{\tau}^{dr,p}$ is doubly robust, and also locally semiparametrically efficient when the working models for the nuisance functions are correctly specified.(Theorem A.1 in Appendix A)
+    \end{itemize}
+\end{frame}
+
+\begin{frame}\frametitle{Estimation and Inference}\end{frame}
+
+\begin{frame}\frametitle{Estimation and Inference}
+    \begin{block}{Theorem 2.}
+        Suppose Assumptions 1-3 and Assumption A.1-A.2 stated in Appendix A hold, and that the working models are logit model and linear regression model. Then,
+        \\(a) If either $\Lambda(X'\gamma^{\ast,ipt}) = p(X)$ a.s. or $X'\beta^{\ast, wls, p}_{0,\Delta} = m^{p}_{0,\Delta}(X)$ a.s., then, as $n \rightarrow \infty$,
+        $$
+            \widehat{\tau}^{dr,p}_{imp} \overset{p}{\to} \tau
+        $$
+        and
+        \begin{align*}
+            \sqrt{n}(\widehat{\tau}^{dr,p}_{imp} - \tau^{dr,p}_{imp})
+            &= 
+            \frac{1}{\sqrt{n}}\sum_{i = 1}^{n} \eta^{dr,p}_{imp}(W;\gamma^{\ast,ipt}, \beta^{\ast,wls,p}_{0,\Delta},\tau^{dr,p}_{imp}) + o_{p}(1)
+            \\ & \overset{d}{\to} N(0,V^{p}_{imp}),
+        \end{align*}
+        where $V^{p}_{imp} = \mathbb{E}\left[\eta^{dr,p}_{imp}(W;\gamma^{\ast, ipt},\beta^{\ast, wls, p}_{0, \Delta}, \tau^{dr, p}_{imp})^{2}\right]$.
+    \end{block}
+\end{frame}
+
+
+\begin{frame}\frametitle{Monte Carlo simulation study}
+
+%simulation result
+\end{frame}
+
+
+%Appendix
+
+\begin{frame}\frametitle{Appendix A}
+    \footnotesize
+    \begin{block}{Assumption A.1.}
+    ($i$) $g(x) = g(x;\theta)$ is a parametric model, where $\theta \in \Theta \subset \mathbb{R}^{k},$ $\Theta$ being compact; ($ii$) $g(x;\theta)$ is $a.s.$ continuous at each $\theta \in \Theta$; ($iii$) there exists a unique pseudo-true parameter $\theta^{\ast} \in int(\Theta)$; ($iv$) $g(x;\theta)$ is $a.s.$ twice continuously differentiable in a neighborhood of $\theta^{\ast}, \Theta^{\ast} \subset \Theta$; ($v$) the estimator $\widehat{\theta}$ is strongly consistent for the $\theta^{\ast}$ and satisfies the following linear expansion:
+    \footnotesize
+    \begin{equation*}
+        \sqrt{n}(\widehat{\theta} - \theta^{\ast}) = \frac{1}{\sqrt{n}} \sum_{i = 1}^{n}l_{g}(W_{i};\theta^{\ast}) + o_{p}(1),
+    \end{equation*}
+    \normalsize
+    \footnotesize
+    where $l_{g}(\cdot;\theta)$ is such that $\mathbb{E}[l_{g}(W;\theta^{\ast})] = 0$, $\mathbb{E}[l_{g}(W;\theta^{\ast})l_{g}(W;\theta^{\ast})']$ exists and is positive definite and $ lim_{\delta \to \infty} \mathbb{E}\left[\sup_{\theta \in \Theta^{\ast}:\|\theta-\theta^{\ast}\| \leq \delta}\|l_{g}(W;\theta)-l_{g}(W;\theta^{\ast})\|^{2} \right] = 0$. In addition, ($vi$) for some $\varepsilon > 0$, $0 < \pi(X;\gamma) \leq 1 - \varepsilon \,a.s.$, for all $\gamma \in int(\Theta^{ps})$,where $\Theta^{ps}$ denotes the parameter space of $\gamma$.
+    \normalsize
+    \end{block}
+    \normalsize
+\end{frame}
+
+\begin{frame}\frametitle{Appendix A}
+    \begin{block}{Assumption A.2.}
+        When panel data are available, assume that $\mathbb{E}[\|h^{p}(W;\kappa^{\ast, p})\|^{2}] < \infty$ and $\mathbb{E}[sup_{\kappa \in \Gamma^{\ast, p}}|\dot{h}^{p}(W;\kappa)|] < \infty$,where $\Gamma^{\ast, p}$ is a small neighborhood of $\kappa^{\ast, p}$.
+    \end{block}
+    %some notations need to be explained,i.e.,\eta^p ...
+\end{frame}
+
+\begin{frame}\frametitle{Appendix A}
+    \footnotesize
+    \begin{block}{Theorem A.1.}
+        Suppose Assumptions 1-3 and Assumptions A.1-A.2 stated in Appendix A hold.
+        Consider the following claims:
+        \footnotesize
+        \begin{align*}
+            &\exists \gamma^{\ast} \in \Theta^{ps}:\mathbb{P}(\pi(X;\gamma^{\ast}) =p(X)) = 1,\\
+            &\exists (\beta^{\ast, p}_{0,1}, \beta^{\ast, p}_{0,0}) \in \Theta^{reg}_{0,1} \times \Theta^{reg}_{0,0}:\mathbb{P}(\mu^{p}_{0,1}(X;\beta^{\ast,p}_{0,1}) - \mu^{p}_{0,0}(X;\beta^{\ast,p}_{0,0}) = m^{p}_{0,1}(X) - m^{p}_{0,0}(X)) = 1.
+        \end{align*}
+        \normalsize
+        \footnotesize
+        (a) Provided that either one of claims stated above is true, as $n \to \infty$,
+        \begin{equation*}
+            \widehat{\tau}^{dr,p} \overset{p}{\to} \tau.
+        \end{equation*}
+        Furthermore,
+        \normalsize
+        \footnotesize
+        \begin{align*}
+            \sqrt{n}(\widehat{\tau}^{dr,p} - \tau^{dr,p}) &= \frac{1}{\sqrt{n}}\sum_{i = 1}^{n}\eta^{p}(W_{i};\gamma^{\ast},\beta^{\ast,p}_{0}) + o_{p}(1)
+            \\& \overset{d}{\to} N(0,V^{p}),
+        \end{align*}
+        where $V^{p} = \mathbb{E}[\eta^{p}(W;\gamma^{\ast},\beta^{\ast,p}_{0})^{2}]$.
+        \normalsize
+    \end{block}
+    \normalsize
 \end{frame}
 
 \end{document}
