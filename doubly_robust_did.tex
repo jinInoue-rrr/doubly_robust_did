@@ -7,6 +7,7 @@
 \usepackage{mathtools} 
 \usepackage{amsmath} 
 \usepackage{amsthm}
+\usepackage{setspace}
 
 \newtheorem{thm}{Theorem}[section] 
 \newtheorem{lem}[thm]{Lemma} 
@@ -15,6 +16,10 @@
 \usetheme{Madrid} 
 \setbeamertemplate{navigation symbols}{} 
 
+\DeclareMathOperator*{\argmax}{arg\,\max}
+\DeclareMathOperator*{\argmin}{arg\,\min}
+\renewcommand{\baselinestretch}{0.95}
+
 \title{Introduction to Doubly Robust DiD} 
 \subtitle{Sant'Anna and Zhao(2020)}
 \author{M1 Inoue Jin}
@@ -22,8 +27,10 @@
 
 \begin{document}
 %\setlength{\mathindent}{0pt}
+\setlength{\abovedisplayskip}{3pt}
+\setlength{\belowdisplayskip}{3pt}
 
-\begin{frame}
+\begin{frame}\frametitle{}
     \titlepage
 \end{frame}
 
@@ -63,15 +70,15 @@
 \end{frame}
 
 \begin{frame}\frametitle{Assumption 1.}
-    \begin{assumption}[Random Sampling]
+    \begin{block}{Assumption 1. (Random Sampling)}
         the data $\{Y_{i0}, Y_{i1}, D_{i}, X_{i}\}^{n}_{i = 1}$ are independent and identically distributed (iid)
-    \end{assumption}
+    \end{block}
 \end{frame}
 
 \begin{frame}\frametitle{Assumption 2.}
-    \begin{assumption}[Conditional PTA]
+    \begin{block}{Assumption 2. (Conditional PTA)}
         $\mathbb{E}[Y_{1}(0) - Y_{0}(0)| D = 1, X] = \mathbb{E}[Y_{1}(0) - Y_{0}(0)|D = 0, X]$ almost surely (a.s.).
-    \end{assumption}
+    \end{block}
     \begin{itemize}
         \item This assumption is called "Conditional Parallel Trend Assumption"
         \item It is crucial for most of DiD literature.
@@ -79,9 +86,9 @@
 \end{frame}
 
 \begin{frame}\frametitle{Assumption 3.}
-    \begin{assumption}[Overlap Condition]
+    \begin{block}{Assumption 3. (Overlap Condition)}
         For some $\varepsilon > 0$, $\mathbb{P}(D = 1) > \varepsilon$ and $\mathbb{P}(D = 1|X) \leq 1 - \varepsilon$ a.s.
-    \end{assumption}
+    \end{block}
     \begin{itemize}
         \item This assumption states that at least a small fraction of the population is treated and that for every value of the covariates X, there is at least a small probability that the unit is not treated.
         \item These assumptions are standard in conditional DID methods.
@@ -252,33 +259,126 @@ The first line is obtained by the law of iterated expectation, and the third lin
 
 %improved estimator 
 \begin{frame}\frametitle{Estimation and Inference}
+\begin{itemize}
+    \item Practitioners need to choose a particular estimation procedure to be implemented.
+    \item In this paper, authors propose the improved DR DiD estimator that can be easily implemented and is not only doubly robust for consistency but also doubly robust for inference.
+    \item  Doubly Robustness for inference practically means that the asymptotic variance of the DR DiD estimator for the ATT is invariant to which working models for the nuisance functions are correctly specified.
+    \item In the following derivation of the improved DR DiD estimators, we consider the case where we use linear model for the outcome regression, logistic model for the propensity score, and use covariates $X$ for all the nuisance models in a symmetric manner.
+\end{itemize}
+\end{frame}
 
+\begin{frame}\frametitle{Estimation and Inference}
+    As discussed above, we consider the following working models for the nuisance functions:
+    \begin{align*}
+        \pi(X;\gamma) = \Lambda(X'\gamma) \equiv \frac{exp(X'\gamma)}{1 + exp(X'\gamma)},\,\text{and} \, \mu^{p}_{0, \Delta} = \mu^{lin, p}_{0, \Delta} \equiv X'\beta^{p}_{0,\Delta}.
+    \end{align*}
+    \begin{block}{Improved DR DiD estimator}
+        \begin{align*}
+        \widehat{\tau}^{dr,p}_{imp} = \mathbb{E}_{n}[(\widehat{w}^{p}_{1}(D) - \widehat{w}^{p}_{0}(D,X;\widehat{\gamma}^{ipt}))(\Delta Y - \mu^{lin, p}_{0, \Delta}(X;\widehat{\beta}^{wls, p}_{0, \Delta}))]
+        \end{align*}
+    \end{block}
+\end{frame}
+
+\begin{frame}\frametitle{Estimation and Inference}
+    the improved DR DiD estimator consists of three estimation procedures. The first two-steps consist of computing the optimization problems stated below.
+    \begin{align*}
+        \widehat{\gamma}^{ipt} &= \argmax_{\gamma \in \Gamma} \mathbb{E}_{n}[DX'\gamma - (1-D)exp(X'\gamma)], \\
+        \widehat{\beta}^{wls, p}_{0, \Delta} &= \argmin_{b \in \Theta} \mathbb{E}_{n}\left[\frac{\Lambda(X'\widehat{\gamma}^{ipt})}{1 - \Lambda(X'\widehat{\gamma}^{ipt})}(\Delta Y - X'b)^{2} \middle|D = 0 \right],
+    \end{align*}
+    Then, in the third step, one plugs the fitted values of the logit model and linear model into the sample analogue of $\tau^{dr, p}$ \\
+    Here, note that $\widehat{\gamma}^{ipt}$ is the inverse probability tilting estimator proposed by Graham et al.(2012) in a different context.
 \end{frame}
 
 \begin{frame}\frametitle{Estimation and Inference}
     \begin{block}{Theorem 2.}
+        \footnotesize
         Suppose Assumptions 1-3 and Assumption A.1-A.2 stated in Appendix A hold, and that the working models are logit model and linear regression model. Then,
         \\(a) If either $\Lambda(X'\gamma^{\ast,ipt}) = p(X)$ a.s. or $X'\beta^{\ast, wls, p}_{0,\Delta} = m^{p}_{0,\Delta}(X)$ a.s., then, as $n \rightarrow \infty$,
         $$
             \widehat{\tau}^{dr,p}_{imp} \overset{p}{\to} \tau
         $$
         and
+        \normalsize
+        \footnotesize
         \begin{align*}
             \sqrt{n}(\widehat{\tau}^{dr,p}_{imp} - \tau^{dr,p}_{imp})
             &= 
             \frac{1}{\sqrt{n}}\sum_{i = 1}^{n} \eta^{dr,p}_{imp}(W;\gamma^{\ast,ipt}, \beta^{\ast,wls,p}_{0,\Delta},\tau^{dr,p}_{imp}) + o_{p}(1)
             \\ & \overset{d}{\to} N(0,V^{p}_{imp}),
         \end{align*}
+        \normalsize
+        \footnotesize
         where $V^{p}_{imp} = \mathbb{E}\left[\eta^{dr,p}_{imp}(W;\gamma^{\ast, ipt},\beta^{\ast, wls, p}_{0, \Delta}, \tau^{dr, p}_{imp})^{2}\right]$.
+        \normalsize
+        \footnotesize
+        \\(b) If both $\Lambda(X'\gamma^{\ast,ipt}) = p(X) a.s.$ and $X'\beta^{\ast, wls, p}_{0, \Delta} = m^{p}_{0, \Delta}(X) a.s.$, then $\eta^{dr, p}_{imp}(W;\gamma^{\ast, ipt},\beta^{\ast, wls, p}, \tau^{dr,p}_{imp}) = \eta^{e,p}(Y_{1}, Y_{0}, D, X) a.s.$ and $V^{p}_{imp}$ is equal to the semiparametric efficient bound. 
+        \normalsize
     \end{block}
 \end{frame}
 
 
 \begin{frame}\frametitle{Monte Carlo simulation study}
-
-%simulation result
+    \begin{itemize}
+        \item Monte Carlo experiments in order to study the finite sample property of DiD estimators including DR DiD estimator.
+        \item $\widehat{\tau}^{dr, p}$, $\widehat{\tau}^{dr,p}_{imp}$:DR DiD estimators.
+        \item $\widehat{\tau}^{reg} = \bar{Y}_{1,1} - \left[\bar{Y}_{1,0}  + \frac{1}{n_{treat}}\sum_{i|D_{i} = 1}(\widehat{\mu}_{0,1}(X_{i}) - \widehat{\mu}_{0,0}(X_{i}))\right],$ where $\bar{Y}_{d,t} = \sum_{i|D_{i} = d, T_{i} = t}Y_{it}/n_{d,t}$ is the sample average outcome among units in treatment group d and time t, see e.g. Heckman et al.(1997).
+        \item $\widehat{\tau}^{ipw,p} = \frac{1}{\mathbb{E}_{n}[D]}\mathbb{E}_{n}\left[\frac{D-p(X)}{1-p(X)}(Y_{1} - Y_{0})\right]$ see e.g. Abadie(2005).
+        \item $\widehat{\tau}^{ipw,p}_{std} = \mathbb{E}_{n}[(\widehat{w}^{p}_{1}(D) - \widehat{w}^{p}_{0}(D,X;\widehat{\gamma}))(Y_{1} - Y_{0})]$
+        \item $\widehat{\tau}^{fe}$:Two way fixed effect model.
+    \end{itemize}
 \end{frame}
 
+\begin{frame}\frametitle{Monte Carlo simulation study}
+    \begin{itemize}
+        \item All observed covariates enter the working models linearly.
+        \item n = 1000 for each design and conduct 10000 Monte Carlo simulations.
+    \end{itemize}
+    \footnotesize
+    \begin{block}{Simulation design when panel data are available}
+        For a generic $W = (W_{1}, W_{2}, W_{3}, W_{4})',$ let
+        \begin{align*}
+            f_{reg}(W) = 210 + 27.4\cdot W_{1} + 13.7\cdot(W_{2} + W_{3} + W_{4}),\\
+            f_{ps}(W) = 0.75\cdot (-W_{1} + 0.5 \cdot W_{2} - 0.25 \cdot W_{3} - 0.1 \cdot W_{4}).
+        \end{align*}
+        Let $\bm{X} = (X_{1}, X_{2}, X_{3}, X_{4})'$ be distributed as $N(\bm{0}, I_{4}),$ and $I_{4}$ be the $4 \times 4$ identity matrix. For $j = 1,2,3,4,$ let $Z_{j} = \left. (\tilde{Z}_{j} - \mathbb{E}[\tilde{Z}_{j}])\middle/ \sqrt{Var(\tilde{Z})} \right.$, where $\tilde{Z}_{1} = exp(0.5X_{1}), \tilde{Z}_{2} = 10 + X_{2}/(1 + exp(X_{1})), \tilde{Z}_{3} = (0.6 + X_{1}X_{2}/25)^{3}$ and $\tilde{Z}_{4} = (20 + X_{2} + X_{4})^{2}$.
+    \end{block}
+    \normalsize
+\end{frame}
+
+\begin{spacing}{0.5}
+\begin{frame}\frametitle{Monte Carlo simulation study}
+    \footnotesize
+    \begin{block}{Data generating process(DGP)}
+        \begin{align*}
+            Y_{0}(0) &= f_{reg}(Z) + v(Z, D) + \varepsilon_{0}, & Y_{1}(d) &= 2 \cdot f_{reg}(Z) + v(Z, D) + \varepsilon_{1}(d),d = 0,1, \\[-2pt]
+            p(Z) &= \frac{exp(f_{ps}(Z))}{1 + exp(f_{ps}(Z))}, & D &= 1\{p(Z)\geq U\}:DGP1
+        \end{align*}
+        \\
+        \begin{align*}
+            Y_{0}(0) &= f_{reg}(Z) + v(Z, D) + \varepsilon_{0}, & Y_{1}(d) &= 2 \cdot f_{reg}(Z) + v(Z, D) + \varepsilon_{d}, d = 0,1, \\[-2pt]
+            p(X) &= \frac{exp(f_{ps}(X))}{1 + exp(f_{ps}(X))}, & D &= 1\{p(X) \geq U\}:DGP2
+        \end{align*}
+        \\
+        \begin{align*}
+            Y_{0}(0) &= f_{reg}(X) + v(X, D) + \varepsilon_{0}, & Y_{1}(d) &= 2 \cdot f_{reg}(X) + v(X, D) + \varepsilon_{1}(d), d = 0,1,\\[-2pt]
+            p(Z) &= \frac{exp(f_{ps}(Z))}{1 + exp(f_{ps}(Z))}, & D &= 1\{p(Z) \geq U\}:DGP3
+        \end{align*}
+        \\
+        \begin{align*}
+            Y_{0}(0) &= f_{reg}(X) + v(X, D) + \varepsilon_{0}, & Y_{1}(d) &= 2 \cdot f_{reg}(X) + v(X, D) + \varepsilon_{1}(d), d = 0,1,\\[-2pt]
+            p(X) &= \frac{exp(f_{ps}(X))}{1 + exp(f_{ps}(X))}, & D &= 1\{p(X) \geq U\}:DGP4
+        \end{align*}
+    \end{block}
+    \normalsize
+\end{frame}
+\end{spacing}
+
+\begin{frame}\frametitle{Monte Carlo simulation study}
+    \begin{figure}
+        \centering
+        \includegraphics[width = 11cm]{doublyrobustDD_sim.jpeg}
+    \end{figure}
+\end{frame}
 
 %Appendix
 

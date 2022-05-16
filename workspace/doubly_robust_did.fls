@@ -529,6 +529,9 @@ INPUT /usr/local/texlive/2021/texmf-dist/tex/latex/tools/calc.sty
 INPUT /usr/local/texlive/2021/texmf-dist/tex/latex/mathtools/mhsetup.sty
 INPUT /usr/local/texlive/2021/texmf-dist/tex/latex/mathtools/mhsetup.sty
 INPUT /usr/local/texlive/2021/texmf-dist/tex/latex/mathtools/mhsetup.sty
+INPUT /usr/local/texlive/2021/texmf-dist/tex/latex/setspace/setspace.sty
+INPUT /usr/local/texlive/2021/texmf-dist/tex/latex/setspace/setspace.sty
+INPUT /usr/local/texlive/2021/texmf-dist/tex/latex/setspace/setspace.sty
 INPUT /usr/local/texlive/2021/texmf-dist/tex/latex/beamer/beamerthemeMadrid.sty
 INPUT /usr/local/texlive/2021/texmf-dist/tex/latex/beamer/beamerthemeMadrid.sty
 INPUT /usr/local/texlive/2021/texmf-dist/tex/latex/beamer/beamerthemeMadrid.sty
@@ -678,11 +681,17 @@ INPUT /usr/local/texlive/2021/texmf-dist/fonts/tfm/public/cm/cmbx9.tfm
 INPUT /usr/local/texlive/2021/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmmib9.tfm
 INPUT /usr/local/texlive/2021/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmbsy9.tfm
 INPUT /usr/local/texlive/2021/texmf-dist/fonts/tfm/public/cm/cmr9.tfm
+INPUT /Users/tidyjin/Library/texlive/2021/texmf-var/luatex-cache/generic/fonts/otl/lmromandemi10-regular.luc
+INPUT /Users/tidyjin/Library/texlive/2021/texmf-var/luatexja/extra_lmromandemi10-regular.luc
+INPUT ./doublyrobustDD_sim.jpeg
+INPUT ./doublyrobustDD_sim.jpeg
+INPUT ./doublyrobustDD_sim.jpeg
 OUTPUT workspace/doubly_robust_did.nav
 OUTPUT workspace/doubly_robust_did.toc
 OUTPUT workspace/doubly_robust_did.snm
 INPUT workspace/doubly_robust_did.aux
 INPUT workspace/doubly_robust_did.out
+INPUT /usr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx9.pfb
 INPUT /usr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb
 INPUT /usr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmex9.pfb
 INPUT /usr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb
